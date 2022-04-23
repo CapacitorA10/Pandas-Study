@@ -2,6 +2,8 @@
 Pandas study for data management competencies
 
 
-'log'
+## 'log'
+
 2022-04-23-
+
 DATA Pivot
