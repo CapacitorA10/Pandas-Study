@@ -26,54 +26,45 @@ def xy2dut(x,y):
     [9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 161, 179, 197, 215, 233, 252, 272, 292, 312, 332, 352, 372, 392, 413, 435, 457, 479, 501, 523, 545, 567, 589, 611, 633, 655, 677, 699, 721, 743, 765, 787, 809, 831, 853, 875, 897, 918, 938, 958, 978, 998, 1018, 1038, 1058, 1077, 1095, 1113, 1131, 1149, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999],
     [9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 251, 271, 291, 311, 331, 351, 371, 391, 412, 434, 456, 478, 500, 522, 544, 566, 588, 610, 632, 654, 676, 698, 720, 742, 764, 786, 808, 830, 852, 874, 896, 917, 937, 957, 977, 997, 1017, 1037, 1057, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999],
     [9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 411, 433, 455, 477, 499, 521, 543, 565, 587, 609, 631, 653, 675, 697, 719, 741, 763, 785, 807, 829, 851, 873, 895, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999]]
-    out = index[y-11][x-11]
+    dutNum = index[y-11][x-11]
 
-    return out
+    return dutNum
 
 ## file open
 
 totalFile = easygui.fileopenbox(filetypes="*.MR1", multiple=True)
-'''
-tempFile = ['C:\\Users\\2076523\\PycharmProjects\\Pandas연습\\MR1Files\\4QQ1002P06.CL2.MR1',
-            'C:\\Users\\2076523\\PycharmProjects\\Pandas연습\\MR1Files\\4QQ1002P07.CL2.MR1',
-            'C:\\Users\\2076523\\PycharmProjects\\Pandas연습\\MR1Files\\4QQ1002P08.CL2.MR1',
-            'C:\\Users\\2076523\\PycharmProjects\\Pandas연습\\MR1Files\\4QQ1002P09.CL2.MR1',
-            'C:\\Users\\2076523\\PycharmProjects\\Pandas연습\\MR1Files\\4QQ1002P10.CL2.MR1']
-'''
-out = []
-out.append('LOT,WAF,X,Y,DUT,BLOCK,FAIL,TEST_CATEGORY')
-out.append('String,Integer,Integer,Integer,Integer,Integer,String,String')
-##
+
+out = [['LOT', 'WAF', 'X', 'Y', 'DUT', 'BLOCK', 'FAIL', 'TEST_CATEGORY'],
+       ['String', 'Integer', 'Integer', 'Integer', 'Integer', 'Integer', 'String', 'String']]
+
 for fileName in totalFile:
     data = pd.read_table(fileName, header=None)
-    #fileName = 'C:\\Users\\2076523\\PycharmProjects\\Pandas연습\\MR1Files\\4QQ1002P04.CL2.MR1'
-    #data = pd.read_table(fileName, header=None)
+    # fileName = 'C:\\Users\\2076523\\PycharmProjects\\Pandas연습\\MR1Files\\4QQ1002P04.CL2.MR1'
+    # data = pd.read_table(fileName, header=None)
 
     # 데이터 내 각 행별로 순회
     lot = fileName[-18:-11]
     wafer = fileName[-10:-8]
     category = fileName[-7:-4]
 
-
     for i in range(len(data)):
-        item = data.iloc[i][0] #각 행별로 비교
+        item = data.iloc[i][0]  # 각 행별로 비교
 
         if item[0:3] == 'die':
             xdie, ydie = item.split()[1:3]
-            xdie = int(xdie); ydie = int(ydie)
+            xdie = int(xdie)
+            ydie = int(ydie)
             dut = xy2dut(xdie, ydie)
         elif item == 'END':
             pass
         elif item[0:3] == 'RDG':
             plane = int(item[3:6])
             semiBlock = int(item[7:11], base=16)
-            block = (semiBlock*4)+plane
+            block = (semiBlock * 4) + plane
 
-            row = lot+','+wafer+','+str(xdie)+','+str(ydie)+','+str(dut)+','+str(block)+','+'F'+','+category
+            row = [lot, wafer, xdie, ydie, dut, block, 'F', category]
+
             out.append(row)
     ##
 outDF = pd.DataFrame(out)
 outDF.to_csv('MR1_merged.csv', index=False, header=False)
-# numpy로 해보기
-##
-
